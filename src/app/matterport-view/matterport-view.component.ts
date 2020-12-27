@@ -17,5 +17,7 @@ export class MatterportViewComponent implements OnInit {
         this.matterPort.getViewUrl().subscribe((url) => {
             this.showCaseElement.nativeElement.src = url;
         });
+
+        this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
     }
 }
