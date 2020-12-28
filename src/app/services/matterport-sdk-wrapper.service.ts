@@ -8,6 +8,11 @@ type HoverEvent = {
     hovering: boolean;
 };
 
+/**
+ * Matterport SDKのラッパークラス
+ *
+ * ライブラリへの依存を減らすため、SDKの型定義ファイルがないので型情報を補うために利用
+ */
 @Injectable({
     providedIn: 'root',
 })
