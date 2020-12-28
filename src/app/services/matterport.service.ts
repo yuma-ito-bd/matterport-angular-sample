@@ -3,6 +3,11 @@ import { environment } from 'src/environments/environment';
 import { Observable, of, Subject } from 'rxjs';
 import { TagId } from '../models/TagId';
 
+type HoverEvent = {
+    id: TagId;
+    hovering: boolean;
+};
+
 @Injectable({
     providedIn: 'root',
 })
@@ -12,6 +17,8 @@ export class MatterportService {
 
     private readonly clickSubject = new Subject<TagId>();
     public readonly click$ = this.clickSubject.asObservable();
+    private readonly hoverSubject = new Subject<HoverEvent>();
+    public readonly hover$ = this.hoverSubject.asObservable();
 
     constructor() {}
 
@@ -49,5 +56,18 @@ export class MatterportService {
             this.clickSubject.next(new TagId(tagSid));
         });
         return this.click$;
+    }
+
+    /**
+     * hoverイベントをlistenする
+     */
+    listenHoverEvent(): Observable<HoverEvent> {
+        this.sdk.on(
+            this.sdk.Mattertag.Event.HOVER,
+            (tagSid: string, hovering: boolean): void => {
+                this.hoverSubject.next({ id: new TagId(tagSid), hovering });
+            }
+        );
+        return this.hover$;
     }
 }

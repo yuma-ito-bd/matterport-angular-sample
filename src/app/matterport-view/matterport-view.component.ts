@@ -11,6 +11,7 @@ export class MatterportViewComponent implements OnInit {
     @ViewChild('showCaseIframe', { static: true })
     showCaseElement!: ElementRef<HTMLIFrameElement>;
     selectedTagId?: TagId;
+    hoveredTagId?: TagId;
 
     constructor(private matterPort: MatterportService) {}
 
@@ -23,6 +24,9 @@ export class MatterportViewComponent implements OnInit {
         await this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
         this.matterPort.listenClickEvent().subscribe((id) => {
             this.selectedTagId = id;
+        });
+        this.matterPort.listenHoverEvent().subscribe(({ id, hovering }) => {
+            this.hoveredTagId = hovering ? id : undefined;
         });
     }
 }
