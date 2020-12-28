@@ -1,0 +1,9 @@
+{
+    "editor.formatOnSave": true, // ファイル保存時にPrettierでフォーマット
+    "editor.codeActionsOnSave": {
+        "source.fixAll.tslint": true // ファイル保存時にTSLintでフォーマット
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+}
