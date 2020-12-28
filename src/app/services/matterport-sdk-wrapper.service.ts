@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { TagId } from '../models/TagId';
 
 type HoverEvent = {
@@ -8,10 +8,15 @@ type HoverEvent = {
     hovering: boolean;
 };
 
+/**
+ * Matterport SDKのラッパークラス
+ *
+ * ライブラリへの依存を減らすため、SDKの型定義ファイルがないので型情報を補うために利用
+ */
 @Injectable({
     providedIn: 'root',
 })
-export class MatterportService {
+export class MatterportSDKWrapperService {
     // 型定義ファイルがないので、anyで宣言する
     private sdk: any;
 
@@ -23,22 +28,10 @@ export class MatterportService {
     constructor() {}
 
     /**
-     * 表示用URLを取得する
-     */
-    getViewUrl(): Observable<string> {
-        // const modelSid = 'SxQL3iGyoDo'; // Construction Site
-        const modelSid = 'JGPnGQ6hosj'; // Southern California Luxuary Home
-
-        const url = `https://my.matterport.com/show?m=${modelSid}&qs=1`;
-        // APIなどからIDを取得することを想定しObservable型にする
-        return of(url);
-    }
-
-    /**
      * SDKの初期化を行う
      * @param element Matterportを表示しているIframe要素
      */
-    async initializeSDK(element: HTMLIFrameElement): Promise<void> {
+    async initialize(element: HTMLIFrameElement): Promise<void> {
         const { matterPortApiKey, matterPortSdkVer } = environment;
         const sdk = await (window as any).MP_SDK.connect(
             element,

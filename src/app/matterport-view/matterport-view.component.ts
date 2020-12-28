@@ -6,9 +6,10 @@ import {
     ViewChild,
 } from '@angular/core';
 import { TagId } from '../models/TagId';
-import { MatterportService } from '../services/matterport.service';
+import { MatterportSDKWrapperService } from '../services/matterport-sdk-wrapper.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { MatterportModelService } from '../services/matterport-model.service';
 
 @Component({
     selector: 'app-matterport-view',
@@ -22,22 +23,25 @@ export class MatterportViewComponent implements OnInit, OnDestroy {
     hoveredTagId?: TagId;
     private onDestroy$ = new Subject();
 
-    constructor(private matterPort: MatterportService) {}
+    constructor(
+        private matterportSdk: MatterportSDKWrapperService,
+        private matterportModel: MatterportModelService
+    ) {}
 
     async ngOnInit(): Promise<void> {
         // Matterportの表示
-        this.matterPort.getViewUrl().subscribe((url) => {
+        this.matterportModel.getViewUrl().subscribe((url) => {
             this.showCaseElement.nativeElement.src = url;
         });
 
-        await this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
-        this.matterPort
+        await this.matterportSdk.initialize(this.showCaseElement.nativeElement);
+        this.matterportSdk
             .listenClickEvent()
             .pipe(takeUntil(this.onDestroy$))
             .subscribe((id) => {
                 this.selectedTagId = id;
             });
-        this.matterPort
+        this.matterportSdk
             .listenHoverEvent()
             .pipe(takeUntil(this.onDestroy$))
             .subscribe(({ id, hovering }) => {
