@@ -1,14 +1,8 @@
-import {
-    Component,
-    ElementRef,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TagId } from '../models/TagId';
 import { MatterportSDKWrapperService } from '../services/matterport-sdk-wrapper.service';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatterportModelService } from '../services/matterport-model.service';
 
 @Component({
@@ -17,8 +11,7 @@ import { MatterportModelService } from '../services/matterport-model.service';
     styleUrls: ['./matterport-view.component.scss'],
 })
 export class MatterportViewComponent implements OnInit, OnDestroy {
-    @ViewChild('showCaseIframe', { static: true })
-    showCaseElement!: ElementRef<HTMLIFrameElement>;
+    modelUrl!: Observable<string>;
     selectedTagId?: TagId;
     hoveredTagId?: TagId;
     private onDestroy$ = new Subject();
@@ -30,11 +23,17 @@ export class MatterportViewComponent implements OnInit, OnDestroy {
 
     async ngOnInit(): Promise<void> {
         // Matterportの表示
-        this.matterportModel.getViewUrl().subscribe((url) => {
-            this.showCaseElement.nativeElement.src = url;
-        });
+        this.modelUrl = this.matterportModel.getViewUrl();
+    }
 
-        await this.matterportSdk.initialize(this.showCaseElement.nativeElement);
+    /**
+     * Matterportの初期表示が完了した際の処理
+     * @param iframe Matterportが表示されているiframe要素
+     *
+     * SDKの初期化やイベントの検知を行う。
+     */
+    async onFrameInit(iframe: HTMLIFrameElement): Promise<void> {
+        await this.matterportSdk.initialize(iframe);
         this.matterportSdk
             .listenClickEvent()
             .pipe(takeUntil(this.onDestroy$))
