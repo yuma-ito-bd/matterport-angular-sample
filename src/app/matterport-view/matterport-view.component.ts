@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
 import { MatterportService } from '../services/matterport.service';
 
 @Component({
@@ -9,15 +10,19 @@ import { MatterportService } from '../services/matterport.service';
 export class MatterportViewComponent implements OnInit {
     @ViewChild('showCaseIframe', { static: true })
     showCaseElement!: ElementRef<HTMLIFrameElement>;
+    clickedTagId?: string;
 
     constructor(private matterPort: MatterportService) {}
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         // Matterportの表示
         this.matterPort.getViewUrl().subscribe((url) => {
             this.showCaseElement.nativeElement.src = url;
         });
 
-        this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
+        await this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
+        this.matterPort.listenClickEvent().subscribe((id) => {
+            this.clickedTagId = id;
+        });
     }
 }
