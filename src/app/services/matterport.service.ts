@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable, of, Subject } from 'rxjs';
+import { TagId } from '../models/TagId';
 
 @Injectable({
     providedIn: 'root',
@@ -9,7 +10,7 @@ export class MatterportService {
     // 型定義ファイルがないので、anyで宣言する
     private sdk: any;
 
-    private readonly clickSubject: Subject<string> = new Subject<string>();
+    private readonly clickSubject = new Subject<TagId>();
     public readonly click$ = this.clickSubject.asObservable();
 
     constructor() {}
@@ -43,9 +44,9 @@ export class MatterportService {
     /**
      * クリックイベントをlistenする
      */
-    listenClickEvent(): Observable<string> {
+    listenClickEvent(): Observable<TagId> {
         this.sdk.on(this.sdk.Mattertag.Event.CLICK, (tagSid: string) => {
-            this.clickSubject.next(tagSid);
+            this.clickSubject.next(new TagId(tagSid));
         });
         return this.click$;
     }

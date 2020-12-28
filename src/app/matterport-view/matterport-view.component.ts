@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
+import { TagId } from '../models/TagId';
 import { MatterportService } from '../services/matterport.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { MatterportService } from '../services/matterport.service';
 export class MatterportViewComponent implements OnInit {
     @ViewChild('showCaseIframe', { static: true })
     showCaseElement!: ElementRef<HTMLIFrameElement>;
-    clickedTagId?: string;
+    selectedTagId?: TagId;
 
     constructor(private matterPort: MatterportService) {}
 
@@ -22,7 +22,7 @@ export class MatterportViewComponent implements OnInit {
 
         await this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
         this.matterPort.listenClickEvent().subscribe((id) => {
-            this.clickedTagId = id;
+            this.selectedTagId = id;
         });
     }
 }
