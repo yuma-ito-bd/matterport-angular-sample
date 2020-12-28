@@ -6,7 +6,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { TagId } from '../models/TagId';
-import { MatterportService } from '../services/matterport.service';
+import { MatterportSDKWrapperService } from '../services/matterport-sdk-wrapper.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -22,7 +22,7 @@ export class MatterportViewComponent implements OnInit, OnDestroy {
     hoveredTagId?: TagId;
     private onDestroy$ = new Subject();
 
-    constructor(private matterPort: MatterportService) {}
+    constructor(private matterPort: MatterportSDKWrapperService) {}
 
     async ngOnInit(): Promise<void> {
         // Matterportの表示
@@ -30,7 +30,7 @@ export class MatterportViewComponent implements OnInit, OnDestroy {
             this.showCaseElement.nativeElement.src = url;
         });
 
-        await this.matterPort.initializeSDK(this.showCaseElement.nativeElement);
+        await this.matterPort.initialize(this.showCaseElement.nativeElement);
         this.matterPort
             .listenClickEvent()
             .pipe(takeUntil(this.onDestroy$))

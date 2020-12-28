@@ -11,7 +11,7 @@ type HoverEvent = {
 @Injectable({
     providedIn: 'root',
 })
-export class MatterportService {
+export class MatterportSDKWrapperService {
     // 型定義ファイルがないので、anyで宣言する
     private sdk: any;
 
@@ -38,7 +38,7 @@ export class MatterportService {
      * SDKの初期化を行う
      * @param element Matterportを表示しているIframe要素
      */
-    async initializeSDK(element: HTMLIFrameElement): Promise<void> {
+    async initialize(element: HTMLIFrameElement): Promise<void> {
         const { matterPortApiKey, matterPortSdkVer } = environment;
         const sdk = await (window as any).MP_SDK.connect(
             element,
